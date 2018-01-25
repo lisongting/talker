@@ -1,0 +1,16 @@
+{
+    "greeting":[
+	{
+	    "name":"lisongting",
+	    "greet_audio":"wav/greet_lisongting.wav",
+            "reach_audio":"wav/reach_lisongting.wav"
+	},
+	{
+	    "name":"wangpeng",
+	    "greet_audio":"wav/greet_wangpeng.wav",
+            "reach_audio":"wav/reach_wangpeng.wav"
+	}	
+	
+    ]
+
+}
