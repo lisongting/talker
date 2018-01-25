@@ -2,8 +2,8 @@
 	
 
 
-	<node name="talker_node" pkg="talker" type="talker">
-	<param name="base_path" value="$(find talker)" />
+	<node name="talker" pkg="talker" type="talker">
+	<param name="base_path" type="str"  value="$(find talker)" />
 	</node>
 
 	

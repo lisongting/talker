@@ -16,8 +16,6 @@
 #include <std_msgs/String.h>
 #include <xbot_msgs/FaceResult.h>
 
-
-
 //#include "../include/AIUITest.h"
 //#include "../include/rapidjson/writer.h"
 //#include "../include/rapidjson/stringbuffer.h"
@@ -42,6 +40,7 @@ const char* subscribe_topic_goal = "/office/goal_reached";
 const char* subscribe_topic_face_recog ="/office/face_result";
 const char* publish_topic ="/office/goal_name";//携带的数据为拼音
 string basePath = "/home/lee/catkin_ws/src/talker";
+//string basePath;
 ros::Publisher publisher;
 ros::Subscriber faceRecogSubscriber;
 ros::Subscriber goalReachSubscriber;
@@ -66,9 +65,9 @@ int main(int argc,char** argv){
     faceRecogSubscriber = nodeHandle.subscribe(subscribe_topic_face_recog,10,onGetFaceResult);
     goalReachSubscriber = nodeHandle.subscribe(subscribe_topic_goal,10,onGoalReached);
 
-
-//    nodeHandle.param("base_path",basePath,"");
-
+//    nodeHandle.param("base_path",basePath);
+//    ROS_ERROR("%s\n",basePath.c_str());
+//    cout<<"basePath: "<<basePath<<endl;
     ret = talker.init(basePath);
     if(ret==-1){
         cout<<"Talker init failed"<<endl;
@@ -78,12 +77,8 @@ int main(int argc,char** argv){
     }
      ros::spin();
      signal(SIGINT,signal_handler);
-//    talker.greetByName("lisongting",onPlayFinished);
-//    talker.chat("你多大 ",onPlayFinished);
-//    talker.chat("李松廷",onPlayFinished);
-//    string str = basePath+"/assets/wav/followme.wav";
-//    talker.play((char*)str.c_str(),REQUEST_SIMPLE_PLAY,onPlayFinished);
-    return 0;
+
+     return 0;
 }
 
 void onGoalReached(const std_msgs::String& msg){

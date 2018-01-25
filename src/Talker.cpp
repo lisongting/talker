@@ -29,6 +29,10 @@ using namespace rapidjson;
 Talker::Talker(){}
 Talker::~Talker(){}
 
+void sig_handler(int s){
+    exit(0);
+}
+
 //读取两个json文件,dictionary.txt是对话库，greeting.txt是问候语
 //传入的路径为assets的路径
 int Talker::init(string basepath){
@@ -37,11 +41,14 @@ int Talker::init(string basepath){
     basePath = basepath;
 
     string file_dict = basepath+"/assets/dictionary.txt";
-    cout<<"basePath :"<<basepath<<endl;
+    cout<<"basePath:  "<<basepath<<endl;
 
     ifstream infile;
     infile.open(file_dict.data());
-    assert(infile.is_open());
+    if(!infile.is_open()){
+        cout<<"Fail to find expected Json file"<<endl;
+        return -1;
+    }
     char c;
     while(!infile.eof()){
         infile>>c;
@@ -54,7 +61,10 @@ int Talker::init(string basepath){
 
     ifstream infile2;
     infile2.open(file_greet.data());
-    assert(infile2.is_open());
+    if(!infile2.is_open()){
+         cout<<"Fail to find expected Json file"<<endl;
+        return -1;
+    }
     char c2;
     while(!infile2.eof()){
         infile2>>c2;
@@ -72,19 +82,18 @@ int Talker::init(string basepath){
     if(greetingDoc.HasParseError()){
         cout<<"Parsing Json Error  ---  Invalid json file :"<<file_greet<<endl;
         return -1;
+    }else{
+        cout<<"Parse Json success"<<endl;
     }
-
 //    cout<<json_dictionary<<endl;
-
 //    cout<<json_greeting<<endl;
-
-    if(uploadHotWords()==-1){
-        cout<<"Upload hot words failed"<<endl;
-        return -1;
+    while(uploadHotWords()==-1){
+        signal(SIGINT,sig_handler);
+        sleep(5);
+        cout<<"Upload hot words failed. Retrying"<<endl;
     }
     return 0;
 }
-
 
 //根据传入的文本进行语音对话或根据文字查找前往目标，
 //chatMsg是对话的文本形式(由讯飞语音识别得到)
@@ -354,10 +363,15 @@ int Talker::uploadHotWords(){
         return -1;
     }
     userwords[len] = '\0';
-    MSPUploadData("userwords", userwords, len, "sub = uup, dtt = userword", &ret); //ÉÏ´«ÓÃ»§´Ê±í
+    MSPUploadData("userwords", userwords, len, "sub = uup, dtt = userword", &ret);
 
     if (MSP_SUCCESS != ret){
         cout<<"MSPUploadData failed ! errorCode:"<< ret<<endl;
+        if(ret==10114){
+            string audio_file = basePath+"/assets/wav/networktimeout.wav";
+            MSPLogout();
+            play((char*)audio_file.c_str(),REQUEST_SIMPLE_PLAY,simple_call_back);
+        }
         return -1;
     }
    MSPLogout();

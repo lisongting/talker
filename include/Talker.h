@@ -6,6 +6,7 @@
 #include "msp_cmn.h"
 #include "msp_errors.h"
 #include <string.h>
+#include <signal.h>
 #include "rapidjson/document.h"
 #define ALSA_MAX_BUF_SIZE 65535
 /* wav音频头部格式 */
@@ -81,15 +82,19 @@ static const int REQUEST_FOLLOW_ME = 66;
 //当到达了目标位置(员工工位)后，触发此事件
 static const int REQUEST_REACH_GOAL = 77;
 
+static void simple_call_back(int code,std::string message){
 
+}
 class Talker {
+	
 private:
 	rapidjson::Document dictionaryDoc;
 	rapidjson::Document greetingDoc;
 	std::string basePath;//根CMakeLists所在的目录
 	std::string goalName;
 	int uploadHotWords();
-
+	void justPlay(char* file);
+	
 public: 
 	Talker();
 	~Talker();
