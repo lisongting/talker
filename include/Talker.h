@@ -68,19 +68,27 @@ typedef void  (*on_play_finished)(int , std::string);
 
 //简单的播放一个文件
 static const int REQUEST_SIMPLE_PLAY = 11;
+
 //对员工进行问候
 static const int REQUEST_GREET_STAFF = 22;
+
 //对访客进行问候
 static const int REQUEST_GREET_VISITOR = 33;
 
 //查询目标点(表示前往员工工位或者前往办公室)
 static const int REQUEST_CHAT_QUERY_GOAL = 44;
+
 //进行AI对话
 static const int REQUEST_CHAT = 55;
+
 //当机器人播放完"好的，请跟我来"之后触发此事件
 static const int REQUEST_FOLLOW_ME = 66;
+
 //当到达了目标位置(员工工位)后，触发此事件
 static const int REQUEST_REACH_GOAL = 77;
+
+//当中途被挡住时
+static const int REQUEST_MOVE_ABORT = 88;
 
 static void simple_call_back(int code,std::string message){
 
@@ -93,7 +101,6 @@ private:
 	std::string basePath;//根CMakeLists所在的目录
 	std::string goalName;
 	int uploadHotWords();
-	void justPlay(char* file);
 	
 public: 
 	Talker();

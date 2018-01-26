@@ -339,11 +339,11 @@ int Talker::uploadHotWords(){
         cout<<"Login Failed ,Error code :"<<r<<endl;
     }
 
-    char*			userwords	=	NULL;
-    size_t			len			=	0;
-    size_t			read_len	=	0;
-    FILE*			fp			=	NULL;
-    int				ret			=	-1;
+    char* userwords =	 NULL;
+    size_t	 len =	0;
+    size_t	 read_len =0;
+    FILE* fp	 =	NULL;
+    int ret =	-1;
     string file = basePath+"/assets/hotwords.txt";
     fp = fopen(file.c_str(), "rb");
     if (NULL == fp){

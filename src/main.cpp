@@ -55,7 +55,7 @@ int ret;
 bool isInteracting;
 bool isPlayingAudio;
 bool getGoal;
-string goal;
+string lastGoal;
 
 int main(int argc,char** argv){
     ros::init(argc,argv,"talker");
@@ -84,15 +84,18 @@ int main(int argc,char** argv){
 void onGoalReached(const std_msgs::String& msg){
     string goal_name = msg.data;
     cout<<"onGoalReached:"<<goal_name<<endl;
-    //表示到达了员工位置处
-    if(goal_name.find("origin")==-1){
+    if(goal_name.find("abort")!=-1){
+        string file = basePath+"/assets/wav/abort.wav";
+        talker.play((char*)file.c_str(),REQUEST_MOVE_ABORT,onPlayFinished);
+    }else if(goal_name.find("origin")==-1){
+        //表示到达了员工位置处
         talker.informWhenReachGoal(goal_name,onPlayFinished);
     }else{
         //表示回到了出发点
         isInteracting = false;
         isPlayingAudio = false;
         getGoal = false;
-        goal = goal_name;
+        lastGoal = goal_name;
     }
 
 }
@@ -151,7 +154,7 @@ void onPlayFinished(int code,string message){
             cout<<"REQUEST_CHAT_QUERY_GOAL"<<endl;
             string file = basePath+"/assets/wav/followme.wav";
             talker.play((char*)file.c_str(),REQUEST_FOLLOW_ME,onPlayFinished);
-            goal = message;
+            lastGoal = message;
             mes.data = message;
             publisher.publish(mes);
             cout<<"Publish Goal: "<<message<<endl;
@@ -174,13 +177,22 @@ void onPlayFinished(int code,string message){
        case REQUEST_REACH_GOAL:
        {
             cout<<"REQUEST_REACH_GOAL"<<endl;
-            goal = "origin";
-            mes.data = goal;
+            string str = "origin";
+            lastGoal = str;
+            mes.data = str;
             //发布消息给SLAM，以回到出发点
             publisher.publish(mes);
-            cout<<"Publish Goal: "<<goal<<endl;
+            cout<<"Publish Goal: "<<str<<endl;
        }
        break;
+       case REQUEST_MOVE_ABORT:
+       {
+            cout<<"REQUEST_MOVE_ABORT"<<endl;
+            sleep(5);
+            mes.data = lastGoal;
+            publisher.publish(mes);
+            cout<<"Publish Goal: "<<lastGoal<<endl;
+       }
        case REQUEST_SIMPLE_PLAY:
        {
            cout<<"REQUEST_SIMPLE_PLAY"<<endl;
